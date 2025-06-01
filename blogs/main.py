@@ -1,8 +1,10 @@
 from fastapi import FastAPI,Depends,status, Response, HTTPException
-from .schemas import Blog
+from .schemas import Blog, BlogResponse
 from . import models
 from .database import engine, SessionLocal
 from sqlalchemy.orm import Session
+from typing import List
+
 app = FastAPI()
 
 models.Base.metadata.create_all(engine)
@@ -23,12 +25,12 @@ def create(request: Blog, db:Session=Depends(get_db)):
     return new_blog
 
 
-@app.get('/blog')
+@app.get('/blog', response_model = List[BlogResponse])
 def getBlogs(db:Session=Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
-@app.get('/blog/{id}', status_code = status.HTTP_200_OK)
+@app.get('/blog/{id}', status_code = status.HTTP_200_OK, response_model=BlogResponse)
 def getBlogs(id:int,response:Response, db:Session=Depends(get_db)):
     result = db.query(models.Blog).filter(models.Blog.id==id).first()
     if not result:
