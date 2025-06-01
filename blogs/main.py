@@ -41,3 +41,11 @@ def getBlogs(id:int,response:Response, db:Session=Depends(get_db)):
         #     "detail":f"There is no blog of id : {id}"
         # }
     return result
+
+
+@app.delete('/blog/{id}', status_code = status.HTTP_204_NO_CONTENT)
+def deleteBlog(id:int, db:Session=Depends(get_db)):
+    blog = db.query(models.Blog).filter(models.Blog.id == id)
+    blog.delete(synchronize_session=False)
+    db.commit()
+    return {"GONE"}
