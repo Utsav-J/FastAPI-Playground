@@ -49,3 +49,12 @@ def deleteBlog(id:int, db:Session=Depends(get_db)):
     blog.delete(synchronize_session=False)
     db.commit()
     return {"GONE"}
+
+@app.put('/blog/{id}', status_code=status.HTTP_202_ACCEPTED)
+def editBlog(id:int,request:Blog, db:Session=Depends(get_db)):
+    res = db.query(models.Blog).filter(models.Blog.id == id)
+    if not res.first():
+        raise HTTPException(status_code=status.HTTP_304_NOT_MODIFIED, detail="There is no such blog")
+    res.update({models.Blog.title:request.title, models.Blog.body:request.body}, synchronize_session=False)
+    db.commit()
+    return res
