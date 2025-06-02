@@ -24,3 +24,15 @@ class BlogResponse(BaseModel):
     # this will omit the id field when returning the blog
     class Config():
         orm_mode = True
+
+class Login(BaseModel):
+    username:str
+    password:str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
